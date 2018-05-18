@@ -1,6 +1,7 @@
 'use strict';
 (() => {
   var lastId = 0;
+  var lastSTO;
   class MyBike extends HTMLElement {
     constructor() {
       super();
@@ -33,6 +34,25 @@
       this.master.select();
     }
 
+    _dosearch(e) {
+      var client = this.config.client;
+      if (!client) {
+        return;
+      }
+      if (lastSTO) {
+        clearTimeout(lastSTO);
+      }
+      lastSTO = setTimeout(() => {
+        client.emit('data', {
+          query: 'search',
+          combo: e.target.getAttribute('list'),
+          module: this.config.module,
+          key: this.config.key,
+          value: e.target.value
+        });
+      }, 200);
+    }
+
     disconnectedCallback() {
       this.innerHTML = '';
       this.master = null;
@@ -48,6 +68,7 @@
       this.viewer.addEventListener('click', this._turnToMaster.bind(this));
       this.master.addEventListener('change', this._turnToViewer.bind(this));
       this.master.addEventListener('blur', this._turnToViewer.bind(this));
+      this.master.addEventListener('keyup', this._dosearch.bind(this));
       this.master.type = 'hidden';
 
       this.innerHTML = '';
