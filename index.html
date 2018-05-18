@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <script src="https://rawgit.com/rianby64/html-toJSON-example/master/toJSON.js"></script>
+  <body>
+    <form id="b">
+      <p>Here we go</p>
+      <input value="value 1">
+      <input list="mylist" name="l" hidden>
+      <datalist id="mylist">
+        <option value="1">value 1</option>
+        <option value="2">value 2</option>
+        <option value="3">value 3</option>
+        <option value="4">value 4</option>
+        <option value="5">value 5</option>
+      </datalist>
+      <p><input type=submit value="Play"></p>
+    </form>
+    <script>
+      var toggle = e => {
+        var value = e.target.value;
+        var found = [...master.list.options].find(option => option.value == value);
+        if (found) {
+          viewer.value = found.label;
+        } else {
+          viewer.value = '';
+        }
+        viewer.hidden = false;
+        master.hidden = true;
+      };
+
+      var viewer = document.querySelector('#b > input:nth-child(2)');
+      var master = document.querySelector('#b > input:nth-child(3)');
+      viewer.addEventListener('click', e => {
+        var label = e.target.value;
+        var found = [...master.list.options].find(option => option.label == label);
+        if (found) {
+          master.value = found.value;
+        }
+        viewer.hidden = true;
+        master.hidden = false;
+        master.focus();
+        master.select();
+      });
+      master.addEventListener('change', toggle);
+      master.addEventListener('blur', toggle);
+    </script>
+
+    <script>
+      var submit = e => {
+        e.preventDefault();
+        var fd = new FormData(e.target).toJSON();
+        console.log(fd);
+      };
+      document.querySelector('form#b').addEventListener('submit', submit);
+    </script>
+  </body>
+</html>
