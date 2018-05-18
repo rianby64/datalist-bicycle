@@ -7,25 +7,28 @@
     }
 
     _turnToViewer(e) {
+      this.master.type = 'text';
       var value = e.target.value;
       var found = [...this.master.list.options].find(option => option.value == value);
       if (found) {
         this.viewer.value = found.label;
       } else {
-        this.viewer.value = '';
+        this.viewer.value = this.master.value;
       }
-      this.viewer.hidden = false;
-      this.master.hidden = true;
+      this.viewer.type = 'text';
+      this.master.type = 'hidden';
     }
 
     _turnToMaster(e) {
+      this.viewer.type = 'hidden';
+      this.master.type = 'text';
       var label = e.target.value;
       var found = [...this.master.list.options].find(option => option.label == label);
       if (found) {
         this.master.value = found.value;
+      } else {
+        this.master.value = this.viewer.value;
       }
-      this.viewer.hidden = true;
-      this.master.hidden = false;
       this.master.focus();
       this.master.select();
     }
@@ -45,7 +48,7 @@
       this.viewer.addEventListener('click', this._turnToMaster.bind(this));
       this.master.addEventListener('change', this._turnToViewer.bind(this));
       this.master.addEventListener('blur', this._turnToViewer.bind(this));
-      this.master.hidden = true;
+      this.master.type = 'hidden';
 
       this.innerHTML = '';
       datalist.id = datalistid;
