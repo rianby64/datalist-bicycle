@@ -1,56 +1,53 @@
 'use strict';
 (() => {
-
   var lastId = 0;
   class MyBike extends HTMLElement {
     constructor() {
       super();
-      lastId++;
     }
+
+    _turnToViewer(e) {
+      var value = e.target.value;
+      var found = [...this.master.list.options].find(option => option.value == value);
+      if (found) {
+        this.viewer.value = found.label;
+      } else {
+        this.viewer.value = '';
+      }
+      this.viewer.hidden = false;
+      this.master.hidden = true;
+    }
+
+    _turnToMaster(e) {
+      var label = e.target.value;
+      var found = [...this.master.list.options].find(option => option.label == label);
+      if (found) {
+        this.master.value = found.value;
+      }
+      this.viewer.hidden = true;
+      this.master.hidden = false;
+      this.master.focus();
+      this.master.select();
+    }
+
     connectedCallback() {
+      var datalistid = `${this.localName}-list-${++lastId}`;
       var datalist = document.createElement('datalist');
-      datalist.id = 'my-list';
-      var master = document.createElement('input');
-      master.setAttribute('list', 'my-list');
-      var viewer = document.createElement('input');
+      this.master = document.createElement('input');
+      this.viewer = document.createElement('input');
 
-      var toggle = e => {
-        var value = e.target.value;
-        var found = [...master.list.options].find(option => option.value == value);
-        if (found) {
-          viewer.value = found.label;
-        } else {
-          viewer.value = '';
-        }
-        viewer.hidden = false;
-        master.hidden = true;
-      };
-
-      viewer.addEventListener('click', e => {
-        var label = e.target.value;
-        var found = [...master.list.options].find(option => option.label == label);
-        if (found) {
-          master.value = found.value;
-        }
-        viewer.hidden = true;
-        master.hidden = false;
-        master.focus();
-        master.select();
-      });
-      master.addEventListener('change', toggle);
-      master.addEventListener('blur', toggle);
-      master.hidden = true;
-
-      var opt1 = document.createElement('option');
-      opt1.setAttribute('value', 1);
-      opt1.setAttribute('label', 'my label1');
-      datalist.appendChild(opt1);
+      this.viewer.addEventListener('click', this._turnToMaster.bind(this));
+      this.master.addEventListener('change', this._turnToViewer.bind(this));
+      this.master.addEventListener('blur', this._turnToViewer.bind(this));
+      this.master.hidden = true;
 
       this.innerHTML = '';
+      datalist.id = datalistid;
+      this.master.setAttribute('list', datalistid);
       var df = document.createDocumentFragment();
       df.appendChild(datalist);
-      df.appendChild(master);
-      df.appendChild(viewer);
+      df.appendChild(this.master);
+      df.appendChild(this.viewer);
       this.appendChild(df);
     }
   }
