@@ -50,6 +50,7 @@
       this.innerHTML = '';
       datalist.id = datalistid;
       this.master.setAttribute('list', datalistid);
+      this.master.setAttribute('master', '');
       var df = document.createDocumentFragment();
       df.appendChild(datalist);
       df.appendChild(this.master);
