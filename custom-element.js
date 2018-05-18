@@ -30,6 +30,12 @@
       this.master.select();
     }
 
+    disconnectedCallback() {
+      this.innerHTML = '';
+      this.master = null;
+      this.viewer = null;
+    }
+
     connectedCallback() {
       var datalistid = `${this.localName}-list-${++lastId}`;
       var datalist = document.createElement('datalist');
